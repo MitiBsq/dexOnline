@@ -37,10 +37,16 @@ header{
 #newSearchLabel {
     display: flex;
     flex-wrap: wrap;
-    align-items: flex-end;
     flex-direction: row-reverse;
+    align-items: flex-end;
     gap: 5px;
     margin-bottom: 30px;
+}
+
+#newSearchLabel h6{
+  padding-right:50%;
+  margin: 0;
+  color: red;
 }
 
 #wordListPlace{
@@ -49,5 +55,6 @@ header{
     border-radius: 2em;
     padding-top: 0%;
 }
+
 
 
