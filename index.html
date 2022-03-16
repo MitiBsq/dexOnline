@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -9,26 +8,20 @@
     <link rel="stylesheet" href="styles.css">
     <script src="script.js" defer></script>
 </head>
-
 <body>
     <header>
         <h1 class="display-1">Dex Online</h1>
-        <h6 id="totalWords" class="h6">Nr cuvinte: </h6>
+        <h6 id="totalWords"></h6>
     </header>
     <div id="searchBoxLabel">
         <h1 id="searchText">Search for a word</h1>
-        <input class="form-control-lg " id="searchBox" type="search" placeholder="Search a word" aria-label="Search" autocapitalize="words">
+        <input class="form-control-lg " id="searchBox" type="search" placeholder="Search a word" aria-label="Search">
         <input type="button" id="searchButton" class="btn btn-primary btn-lg" value="Search">
     </div>
-    <div id="addLabel" class="input-group mb-3">
-        <div id="addPlace" class="input-group-prepend"></div>
-    </div>
+    <div id="addLabel" class="input-group mb-3"></div>
     <div id="wordListPlace">
         <ul id="wordList" class="list-group"></ul>
     </div>
-    <div id="editLabel">
-        <div id="editPlace" class="input-group mb-3"></div>
-    </div>
+    <div id="editLabel" class="input-group mb-3"> </div>
 </body>
-
 </html>

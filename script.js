@@ -1,34 +1,33 @@
-let totalWords = document.getElementById('totalWords');
+//Declaring the global variables
+const totalWords = document.getElementById('totalWords');
 const searchBoxLabel = document.getElementById('searchBoxLabel');
 const searchBox = document.getElementById('searchBox');
+searchBox.focus();
 const searchButton = document.getElementById('searchButton');
 const wordListPlace = document.getElementById('wordListPlace');
+wordListPlace.style.visibility = 'hidden';
 const wordList = document.getElementById('wordList');
 const searchText = document.getElementById('searchText');
-wordListPlace.style.visibility = 'hidden';
-searchBox.focus();
-totalWords.innerHTML = "Total number of Words: " + localStorage.length;
-for (let i = 0; i < localStorage.length; i++) {
-    let words = document.createElement('li');
-    words.className = 'list-group-item ';
-    words.innerText = localStorage.key(i);
-    words.innerText = words.innerText + " = " + localStorage.getItem(words.innerText);
-    words.style.fontSize = 'large';
-    wordList.appendChild(words);
-    settingButtons(words, localStorage.key(i));
+//Showing the total number of words that are currently registered on the page
+if (localStorage.length === 0) {
+    totalWords.innerHTML = "There are no current registered words on this dictionary"
+} else {
+    totalWords.innerHTML = "Total number of Words: " + localStorage.length;
 }
 
 // Adding an event to the searchButton + fixing the error of not typing something
 searchButton.addEventListener('click', firstEvent);
 function firstEvent() {
     if (searchBox.value !== "") {
+        //Makes the first letter of the word an uppercase
         searchBox.value = searchBox.value[0].toUpperCase() + searchBox.value.substring(1);
         if (localStorage.getItem(searchBox.value) === null) {
+            generateList();
             nextPage();
         } else {
             searchText.innerText = "Great! Word found";
             searchText.style.color = 'green';
-            showWord(searchBox.value);
+            showWord();
         }
     } else {
         document.getElementById('searchText').innerText = "Insert a word!";
@@ -36,23 +35,40 @@ function firstEvent() {
     }
 }
 
-
-//function for showing the searched word(Not finished)
+//function for showing the searched word
 const wordFound = document.createElement('h4');
-function showWord(element) {
+function showWord() {
     wordFound.innerText = searchBox.value;
     wordFound.innerText = wordFound.innerText + " = " + localStorage.getItem(searchBox.value);
     searchBoxLabel.appendChild(wordFound);
 }
 
+//Generating the list and it's registered words
+function generateList() {
+    for (let i = 0; i < localStorage.length; i++) {
+        let words = document.createElement('li');
+        words.className = 'list-group-item ';
+        words.innerText = localStorage.key(i);
+        words.id = words.innerText;
+        words.innerText = words.innerText + " = " + localStorage.getItem(words.innerText);
+        words.style.fontSize = 'large';
+        wordList.appendChild(words);
+        settingsButtons(localStorage.key(i));
+    }
+}
+
+//Function for showing the next interface of the page
 function nextPage() {
-    searchButton.removeEventListener('click', firstEvent);
-    wordFound.remove();
     wordListPlace.style.visibility = 'visible';
-    //Moving the search box + search button on the right side
+    //Removing some features from the latest action
+    wordFound.remove();
+    searchButton.removeEventListener('click', firstEvent);
+    //Moving the search box + search button on the right side + Adding a new event for the search button
     searchBoxLabel.id = "newSearchLabel";
     searchBox.className = "form-control-sm";
     searchButton.className = 'btn btn-primary btn-sm';
+    searchButton.addEventListener('click', secondSearch);
+    //New text on the screen
     searchText.style.order = "1";
     searchText.style.paddingRight = "50%";
     searchText.style.margin = "0%";
@@ -62,8 +78,8 @@ function nextPage() {
     //Creating a new add panel for adding new words
     const addWordButton = document.createElement('button');
     addWordButton.innerText = "Add";
-    addWordButton.className = "btn btn-outline-secondary";
-    document.getElementById('addPlace').appendChild(addWordButton);
+    addWordButton.className = "btn btn-outline-dark";
+    document.getElementById('addLabel').appendChild(addWordButton);
     const addWordBox = document.createElement('input');
     addWordBox.type = "text";
     addWordBox.placeholder = "Add a new word";
@@ -74,34 +90,40 @@ function nextPage() {
     addWordBoxDetail.placeholder = "What it means?";
     addWordBoxDetail.className = "form-control";
     document.getElementById('addLabel').appendChild(addWordBoxDetail);
-    // sa folosesc localStorage pentru stocarea datelor
     addWordButton.addEventListener('click', () => {
-        let newWord = document.createElement('li');
-        newWord.className = 'list-group-item';
-        if (addWordBox.value === "" || addWordBoxDetail.value === "") {
-            addWordBox.placeholder = "Insert a word!";
-            addWordBoxDetail.placeholder = "Insert an detail for the word please!";
-        } else {
-            addWordBox.value = addWordBox.value[0].toUpperCase() + addWordBox.value.substring(1);
-            addWordBoxDetail.value = addWordBoxDetail.value[0].toUpperCase() + addWordBoxDetail.value.substring(1);
-            if (localStorage.getItem(addWordBox.value) === null) {
-                newWord.innerText = addWordBox.value + " = " + addWordBoxDetail.value;
-                newWord.style.fontSize = 'large';
-                wordList.appendChild(newWord);
-                localStorage.setItem(addWordBox.value, addWordBoxDetail.value);
-                totalWords.innerHTML = "Total number of Words: " + localStorage.length;
-                settingButtons(newWord, addWordBox.value);
-            } else {
-                searchText.innerText = "The word is already defined!";
-                searchText.style.color = 'red';
-            }
-        }
+        searchText.innerText = "A new word have been added!";
+        searchText.style.color = 'green';
+        addWordFunction(addWordBox.value, addWordBoxDetail.value, addWordBox, addWordBoxDetail);
     });
-    searchButton.addEventListener('click', secondEvent);
 }
 
-//Function for searching again(Not finished)
-function secondEvent() {
+//Function for adding new words + their definition to the dictionary
+function addWordFunction(theWord, theDetail, wordPlaceholder, detailPlaceholder) {
+    if (theWord === "" || theDetail === "") {
+        wordPlaceholder.placeholder = "Insert a word!";
+        detailPlaceholder.placeholder = "Insert an detail for the word please!";
+    } else {
+        theWord = theWord[0].toUpperCase() + theWord.substring(1);
+        theDetail = theDetail[0].toUpperCase() + theDetail.substring(1);
+        if (localStorage.getItem(theWord) === null) {
+            let newWord = document.createElement('li');
+            newWord.className = 'list-group-item';
+            newWord.innerText = theWord + " = " + theDetail;
+            newWord.id = theWord;
+            newWord.style.fontSize = 'large';
+            wordList.appendChild(newWord);
+            localStorage.setItem(theWord, theDetail);
+            totalWords.innerHTML = "Total number of Words: " + localStorage.length;
+            settingsButtons(theWord);
+        } else {
+            searchText.innerText = "The word is already defined!";
+            searchText.style.color = 'red';
+        }
+    }
+}
+
+//Function for searching again
+function secondSearch() {
     if (searchBox.value === "") {
         searchBox.placeholder = "Insert a word first!";
     }
@@ -112,76 +134,93 @@ function secondEvent() {
             searchText.style.color = "black";
             searchText.style.paddingRight = "35%";
             searchText.style.fontSize = "large";
-
+        } else {
+            searchText.style.color = "red";
+            searchText.style.fontSize = 'medium';
+            searchText.innerText = "Sorry, we couldn't find your choosed word, maybe you can find it in the list below";
         }
     }
-
 }
 
-function settingButtons(appender, wordSetting) {
+//Function for creating the edit and delete buttons
+function settingsButtons(theWord) {
     let editButton = document.createElement('input');
     editButton.type = 'button';
     editButton.value = "edit";
-    editButton.className = 'btn btn-outline-secondary';
+    editButton.className = 'btn btn-outline-dark';
     editButton.id = "editButton";
     let deleteButton = document.createElement('input');
     deleteButton.type = 'button';
     deleteButton.value = "delete";
-    deleteButton.className = 'btn btn-outline-secondary';
+    deleteButton.className = 'btn btn-outline-dark';
     deleteButton.id = "deleteButton";
-    appender.appendChild(editButton);
-    appender.appendChild(deleteButton);
-    editButton.addEventListener('click', () => {
-        searchText.innerText = "You can now edit the selected word definition!";
-        searchText.style.color = 'black';
-        searchText.style.fontSize = 'large';
-        wordListPlace.style.display = 'none';
-        document.getElementById('addLabel').style.display = 'none';
-        let editBox = document.createElement('input');
-        editBox.type = "text";
-        editBox.placeholder = 'New Definition';
-        editBox.className = 'form-control';
-        let editBoxSubmit = document.createElement('button');
-        editBoxSubmit.innerText = "Submit Edit";
-        editBoxSubmit.className = "btn btn-outline-secondary";
-        editBoxSubmit.style.backgroundColor = 'white';
-        let editedWord = document.createElement('span');
-        editedWord.innerText = wordSetting;
-        editedWord.className = 'input-group-text';
-        document.getElementById('editPlace').appendChild(editedWord);
-        document.getElementById("editPlace").appendChild(editBox);
-        document.getElementById('editPlace').appendChild(editBoxSubmit);
-        editBoxSubmit.addEventListener('click', () => {
-            freshWord(editBox.value, wordSetting);
-        });
+    document.getElementById(theWord).appendChild(editButton);
+    document.getElementById(theWord).appendChild(deleteButton);
+    editButton.addEventListener('click', () => { editWord(theWord) });
+    deleteButton.addEventListener('click', () => { deleteWord(theWord) });
+}
+
+//Edit Button function
+function editWord(theWord) {
+    searchText.innerText = "You can now edit the selected word definition!";
+    searchText.style.color = 'black';
+    searchText.style.fontSize = 'large';
+    wordListPlace.style.display = 'none';
+    document.getElementById('addLabel').style.visibility = 'hidden';
+    let editBox = document.createElement('input');
+    editBox.type = "text";
+    editBox.placeholder = 'New Definition';
+    editBox.className = 'form-control';
+    let editBoxSubmit = document.createElement('button');
+    editBoxSubmit.innerText = "Submit Edit";
+    editBoxSubmit.className = "btn btn-outline-dark";
+    editBoxSubmit.style.backgroundColor = 'white';
+    let editedWord = document.createElement('span');
+    editedWord.innerText = theWord;
+    editedWord.className = 'input-group-text';
+    document.getElementById('editLabel').appendChild(editedWord);
+    document.getElementById("editLabel").appendChild(editBox);
+    document.getElementById('editLabel').appendChild(editBoxSubmit);
+    editBox.focus();
+    editBoxSubmit.addEventListener('click', () => {
+        if (editBox.value === "") {
+            searchText.innerText = "Please insert a new definition!";
+            searchText.style.color = 'red';
+            searchText.style.fontSize = 'large';
+        } else {
+            freshWord(editBox.value, theWord);
+            document.getElementById(theWord).remove();
+            editBox.remove();
+            editBoxSubmit.remove();
+            editedWord.remove();
+            document.getElementById('addLabel').style.visibility = 'visible';
+        }
     });
-    deleteButton.addEventListener('click', () => {
-        appender.remove();
-        localStorage.removeItem(wordSetting);
-    })
 }
 
-function freshWord(valoareNoua, Cuvant) {
-    if (valoareNoua === "") {
-        searchText.innerText = "Please insert a new definition!";
-        searchText.style.color = 'red';
-        searchText.style.fontSize = 'large';
-    } else {
-        valoareNoua = valoareNoua[0].toUpperCase() + valoareNoua.substring(1);
-        localStorage.setItem(Cuvant, valoareNoua);
-        returnToTheList();
-    };
+//Delete button function
+function deleteWord(theWord) {
+    searchText.innerText = 'The word "' + theWord + '" have been deleted!';
+    searchText.style.color = 'black';
+    document.getElementById(theWord).remove();
+    localStorage.removeItem(theWord);
+    totalWords.innerHTML = "Total number of Words: " + localStorage.length;
 }
 
-
-//TO DO:
-     
-    //Sa fac partea de return la pagina cu lista de cuvinte
-/* function returnToTheList() {
-    
-} */
-
-    //Sa mai scap de functii interioare si sa le fac externe
-    //Sa il retusez
-    //Sa il incarc si sa ma filmez
-    
+//Function for replacing the editet word with the new one
+function freshWord(newDetail, theWord) {
+    searchText.innerText = "The list have been updated!";
+    searchText.style.color = 'green';
+    searchText.style.fontSize = 'large';
+    newDetail = newDetail[0].toUpperCase() + newDetail.substring(1);
+    localStorage.setItem(theWord, newDetail);
+    newDetail = theWord + " = " + newDetail;
+    let words = document.createElement('li');
+    words.id = newDetail;
+    words.className = 'list-group-item ';
+    words.innerText = newDetail;
+    words.style.fontSize = 'large';
+    wordList.appendChild(words);
+    settingsButtons(newDetail);
+    wordListPlace.style.display = 'initial';
+}

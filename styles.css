@@ -11,7 +11,7 @@ header{
     justify-content: center;
     flex-direction: column;
     gap: 10px;
-    border-bottom: 1px black solid;
+    border-bottom: 5px black solid;
     margin-bottom: 1.2em;
 }
 
@@ -34,6 +34,7 @@ header{
     padding-top: 10%;
     gap: 5px;
 }
+
 #newSearchLabel {
     display: flex;
     flex-wrap: wrap;
@@ -49,33 +50,33 @@ header{
     align-self: center;
 }
 
- ul{
+ul{
     display: flex;
     border: 1px black solid;
     border-radius: 2em;
     padding-top: 0%;
     margin-top: 0%;
-    
- }
+    flex-wrap: wrap;
+ } 
  
- #editButton{
+#editButton{
     position: absolute;
     left: 90%;
     bottom: 1px;
     right: auto;
-    
 }
 
-
- #deleteButton{
+#deleteButton{
     position: absolute;
     left: 95%;
     bottom: 1px;
     right: auto;
 }
 
+h4{
+    margin-top: 20px;
+}
 
-
-
-
-
+.btn-outline-dark{
+    background-color: white;
+}
