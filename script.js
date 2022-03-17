@@ -53,7 +53,7 @@ function generateList() {
         words.innerText = words.innerText + " = " + localStorage.getItem(words.innerText);
         words.style.fontSize = 'large';
         wordList.appendChild(words);
-        settingsButtons(localStorage.key(i));
+        settingsButtons(localStorage.key(i), 0);
     }
 }
 
@@ -91,8 +91,6 @@ function nextPage() {
     addWordBoxDetail.className = "form-control";
     document.getElementById('addLabel').appendChild(addWordBoxDetail);
     addWordButton.addEventListener('click', () => {
-        searchText.innerText = "A new word have been added!";
-        searchText.style.color = 'green';
         addWordFunction(addWordBox.value, addWordBoxDetail.value, addWordBox, addWordBoxDetail);
     });
 }
@@ -114,7 +112,9 @@ function addWordFunction(theWord, theDetail, wordPlaceholder, detailPlaceholder)
             wordList.appendChild(newWord);
             localStorage.setItem(theWord, theDetail);
             totalWords.innerHTML = "Total number of Words: " + localStorage.length;
-            settingsButtons(theWord);
+            settingsButtons(theWord, 0);
+            searchText.innerText = "A new word have been added!";
+            searchText.style.color = 'green';
         } else {
             searchText.innerText = "The word is already defined!";
             searchText.style.color = 'red';
@@ -143,7 +143,7 @@ function secondSearch() {
 }
 
 //Function for creating the edit and delete buttons
-function settingsButtons(theWord) {
+function settingsButtons(theWordID, ifEdited) {
     let editButton = document.createElement('input');
     editButton.type = 'button';
     editButton.value = "edit";
@@ -154,14 +154,21 @@ function settingsButtons(theWord) {
     deleteButton.value = "delete";
     deleteButton.className = 'btn btn-outline-dark';
     deleteButton.id = "deleteButton";
-    document.getElementById(theWord).appendChild(editButton);
-    document.getElementById(theWord).appendChild(deleteButton);
-    editButton.addEventListener('click', () => { editWord(theWord) });
-    deleteButton.addEventListener('click', () => { deleteWord(theWord) });
+    document.getElementById(theWordID).appendChild(editButton);
+    document.getElementById(theWordID).appendChild(deleteButton);
+    if (ifEdited === 0) {
+        editButton.addEventListener('click', () => { editWord(theWordID, 0) });
+        deleteButton.addEventListener('click', () => { deleteWord(theWordID, 0) });
+    } else {
+        editButton.addEventListener('click', () => { editWord(ifEdited, theWordID) });
+        deleteButton.addEventListener('click', () => {
+            deleteWord(theWordID, ifEdited)
+        });
+    }
 }
 
 //Edit Button function
-function editWord(theWord) {
+function editWord(theWord, ifEdited) {
     searchText.innerText = "You can now edit the selected word definition!";
     searchText.style.color = 'black';
     searchText.style.fontSize = 'large';
@@ -189,22 +196,17 @@ function editWord(theWord) {
             searchText.style.fontSize = 'large';
         } else {
             freshWord(editBox.value, theWord);
-            document.getElementById(theWord).remove();
+            if (ifEdited === 0) {
+                document.getElementById(theWord).remove();
+            } else {
+                document.getElementById(ifEdited).remove();
+            }
             editBox.remove();
             editBoxSubmit.remove();
             editedWord.remove();
             document.getElementById('addLabel').style.visibility = 'visible';
         }
     });
-}
-
-//Delete button function
-function deleteWord(theWord) {
-    searchText.innerText = 'The word "' + theWord + '" have been deleted!';
-    searchText.style.color = 'black';
-    document.getElementById(theWord).remove();
-    localStorage.removeItem(theWord);
-    totalWords.innerHTML = "Total number of Words: " + localStorage.length;
 }
 
 //Function for replacing the editet word with the new one
@@ -221,6 +223,20 @@ function freshWord(newDetail, theWord) {
     words.innerText = newDetail;
     words.style.fontSize = 'large';
     wordList.appendChild(words);
-    settingsButtons(newDetail);
+    settingsButtons(newDetail, theWord);
     wordListPlace.style.display = 'initial';
+}
+
+//Delete button function
+function deleteWord(theWord, ifEdited) {
+    searchText.innerText = 'The word "' + theWord + '" have been deleted!';
+    searchText.style.color = 'black';
+    if (ifEdited === 0) {
+        document.getElementById(theWord).remove();
+        localStorage.removeItem(theWord);
+    } else {
+        document.getElementById(theWord).remove();
+        localStorage.removeItem(ifEdited);
+    }
+    totalWords.innerHTML = "Total number of Words: " + localStorage.length;
 }
