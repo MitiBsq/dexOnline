@@ -24,30 +24,33 @@ header{
     align-self: center;
 }
 
+#screenBox {
+    display: flex;
+    margin-top: 5em;
+    flex-direction: column;
+    align-content: center;
+    justify-content: center;
+    align-items: center;
+}
+
+#screenBoxNew {
+    display: flex;
+    margin-top: 1em;
+    margin-left: 5em;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1em;
+    align-content: center;
+}
+
 #searchBoxLabel{
     display: flex;
     justify-content: space-around;
     flex-wrap: wrap;
     align-items: center;
     flex-direction: column; 
-    padding-bottom: 21%;
-    padding-top: 10%;
     gap: 5px;
-}
-
-#newSearchLabel {
-    display: flex;
-    flex-wrap: wrap;
-    flex-direction: row-reverse;
-    align-items: flex-end;
-    gap: 5px;
-    margin-bottom: 30px;
-    row-gap: 0;
-    align-items: center;
-}
-
-#searchText{
-    align-self: center;
 }
 
 ul{
