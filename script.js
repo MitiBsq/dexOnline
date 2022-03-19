@@ -24,7 +24,7 @@ function searchTextFunction(textValue, textColor, fontSize) {
 document.getElementById('searchButton').addEventListener('click', searchEvent);
 function searchEvent() {
     //Double "==" , not triple "===" for fixing the error of pressing "space"; 
-    if (searchBox.value == 0) {
+    if (searchBox.value == 0 || searchBox.value > 0) {
         searchBox.placeholder = "Insert a word first!";
         if (nextPageCount === 0) {
             searchTextFunction("Insert a word!", 'red');
