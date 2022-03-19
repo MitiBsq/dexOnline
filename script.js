@@ -53,7 +53,7 @@ function generateList() {
         words.innerText = words.innerText + " = " + localStorage.getItem(words.innerText);
         words.style.fontSize = 'large';
         wordList.appendChild(words);
-        settingsButtons(localStorage.key(i), 0);
+        settingsButtons(localStorage.key(i));
     }
 }
 
@@ -112,7 +112,7 @@ function addWordFunction(theWord, theDetail, wordPlaceholder, detailPlaceholder)
             wordList.appendChild(newWord);
             localStorage.setItem(theWord, theDetail);
             totalWords.innerHTML = "Total number of Words: " + localStorage.length;
-            settingsButtons(theWord, 0);
+            settingsButtons(theWord);
             searchText.innerText = "A new word have been added!";
             searchText.style.color = 'green';
         } else {
@@ -143,7 +143,7 @@ function secondSearch() {
 }
 
 //Function for creating the edit and delete buttons
-function settingsButtons(theWordID, ifEdited) {
+function settingsButtons(theWordID) {
     let editButton = document.createElement('input');
     editButton.type = 'button';
     editButton.value = "edit";
@@ -156,19 +156,12 @@ function settingsButtons(theWordID, ifEdited) {
     deleteButton.id = "deleteButton";
     document.getElementById(theWordID).appendChild(editButton);
     document.getElementById(theWordID).appendChild(deleteButton);
-    if (ifEdited === 0) {
-        editButton.addEventListener('click', () => { editWord(theWordID, 0) });
-        deleteButton.addEventListener('click', () => { deleteWord(theWordID, 0) });
-    } else {
-        editButton.addEventListener('click', () => { editWord(ifEdited, theWordID) });
-        deleteButton.addEventListener('click', () => {
-            deleteWord(theWordID, ifEdited)
-        });
-    }
+    editButton.addEventListener('click', () => { editWord(theWordID) });
+    deleteButton.addEventListener('click', () => { deleteWord(theWordID) });
 }
 
 //Edit Button function
-function editWord(theWord, ifEdited) {
+function editWord(theWord) {
     searchText.innerText = "You can now edit the selected word definition!";
     searchText.style.color = 'black';
     searchText.style.fontSize = 'large';
@@ -195,12 +188,8 @@ function editWord(theWord, ifEdited) {
             searchText.style.color = 'red';
             searchText.style.fontSize = 'large';
         } else {
+            document.getElementById(theWord).remove();
             freshWord(editBox.value, theWord);
-            if (ifEdited === 0) {
-                document.getElementById(theWord).remove();
-            } else {
-                document.getElementById(ifEdited).remove();
-            }
             editBox.remove();
             editBoxSubmit.remove();
             editedWord.remove();
@@ -215,28 +204,23 @@ function freshWord(newDetail, theWord) {
     searchText.style.color = 'green';
     searchText.style.fontSize = 'large';
     newDetail = newDetail[0].toUpperCase() + newDetail.substring(1);
+    /* localStorage.removeItem(theWord); */
     localStorage.setItem(theWord, newDetail);
-    newDetail = theWord + " = " + newDetail;
     let words = document.createElement('li');
-    words.id = newDetail;
+    words.id = theWord;
     words.className = 'list-group-item ';
-    words.innerText = newDetail;
+    words.innerText = theWord + " = " + newDetail;
     words.style.fontSize = 'large';
     wordList.appendChild(words);
-    settingsButtons(newDetail, theWord);
+    settingsButtons(theWord);
     wordListPlace.style.display = 'initial';
 }
 
 //Delete button function
-function deleteWord(theWord, ifEdited) {
+function deleteWord(theWord) {
     searchText.innerText = 'The word "' + theWord + '" have been deleted!';
     searchText.style.color = 'black';
-    if (ifEdited === 0) {
-        document.getElementById(theWord).remove();
-        localStorage.removeItem(theWord);
-    } else {
-        document.getElementById(theWord).remove();
-        localStorage.removeItem(ifEdited);
-    }
+    document.getElementById(theWord).remove();
+    localStorage.removeItem(theWord);
     totalWords.innerHTML = "Total number of Words: " + localStorage.length;
 }
